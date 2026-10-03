@@ -4,15 +4,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-PackApp (a.k.a. "Parcel Package App") is a goods-reception app for registering incoming packages and printing sticker labels. The repository is **pre-implementation**: it contains only [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) (the product brief – the source of truth), [README.md](README.md) and the workflow diagram `image.png`. There is no code, build system, linter or test runner yet, so there are no commands to list. When the scaffold is added, record the build / lint / test / single-test commands here.
+PackApp (a.k.a. "Parcel Package App") is a goods-reception app for registering incoming packages and printing sticker labels. [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) is the product brief and the source of truth – read it before planning any feature.
 
-Read [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) before planning any feature.
+The MVP is being built in steps, one PR each. Done so far: backend scaffold with login and dynamic RBAC. Still to come: package CRUD/search and tracking lookup, label PDFs, then the frontend. Update this list as steps land.
 
-## Planned stack
+## Commands
 
-- Frontend: TypeScript
-- Backend: Python with FastAPI
-- Database: local (MVP only)
+Run from `backend/` (PowerShell). The virtualenv is `backend/.venv`.
+
+- Install: `python -m venv .venv; .venv\Scripts\python -m pip install -r requirements.txt`
+- Run API: `.venv\Scripts\python -m uvicorn app.main:app --reload` (http://localhost:8000, API page at `/docs`)
+- All tests: `.venv\Scripts\python -m pytest`
+- Single test: `.venv\Scripts\python -m pytest tests/test_auth.py::test_logout_ends_session`
+
+There is no linter configured and no frontend yet.
+
+## Backend architecture
+
+- `app/main.py` wires routers and, on startup, creates tables and runs `app/seed.py` (default permissions, roles, demo users – idempotent, never overwrites admin changes).
+- Layers: `routers/` (HTTP only) → `services/` (logic) → `models/` (SQLAlchemy) with `schemas/` (Pydantic) for request/response shapes.
+- Auth: JWT in an HttpOnly cookie; `services/auth.get_current_user` reloads the user from the DB on every request.
+- RBAC: endpoints are gated with `Depends(require_permission(CODE))` from `services/permissions.py`. Permissions per role live in the DB, so admin changes apply on the next request. Any change to roles/users must call `ensure_rbac_manager_remains(db)` before commit.
+- Tests (`tests/conftest.py`) override `get_db` with a seeded in-memory SQLite DB; use the `login("chief")` fixture to get a client logged in as a demo user. The app's `lifespan` does not run in tests.
+
+## Stack
+
+- Frontend: TypeScript (React + Vite, planned)
+- Backend: Python with FastAPI, SQLAlchemy, SQLite file at `backend/data/packapp.db`
 - Verification is done through a locally served web app; the product goals are **simplification** and **automation** of a slow, manual workflow.
 
 ## Core workflow (drives the architecture)
