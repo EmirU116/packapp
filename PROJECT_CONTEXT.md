@@ -76,6 +76,11 @@ Testing the result should be done through local web, we are aiming for the simpl
 - **Plan Mode**: for planning for tasks for each role
 - **Documentaton**: Writes about features added, when implementing a feature.
 - **Writing Code**: Should be reusable, scalable, and modular. To explain complex or large code, for function/methods, use multistring to explain what the method/function does, for small code like loops and if statements, use comments.
+- **Commits and PRs**:
+    - Never commit or push directly to `main`. Each piece of work goes on its own branch (`feature/<short-name>`, or `chore/<short-name>` for non-feature work).
+    - Commit regularly in small, logical steps with clear messages, so the history is easy to follow.
+    - When a piece of work is finished and its tests pass, push the branch and open a PR to `main` with a summary of what changed and how to test it.
+    - Only I (human) approve and merge PRs. Agents never merge a PR, and wait for my approval of a PR before starting work that builds on it.
 - **Allowed**: 
     - Agents are allowed to make researches through web when it comes to writing systems, designing architectures, to further understand things better.
     - Agents are allowed to add Agents skills 
