@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from app.config import BASE_DIR
 from app.database import Base, SessionLocal, engine
-from app.routers import admin, auth
+from app.routers import admin, auth, notifications, packages, tracking
 from app.seed import seed
 
 
@@ -21,3 +21,6 @@ async def lifespan(app: FastAPI):
 app = FastAPI(title="PackApp", lifespan=lifespan)
 app.include_router(auth.router)
 app.include_router(admin.router)
+app.include_router(packages.router)
+app.include_router(tracking.router)
+app.include_router(notifications.router)
