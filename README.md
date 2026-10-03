@@ -2,3 +2,13 @@
 This is a project that should make delivering packages easier, instead of making everything manuel, specially when registering and delievering packages. 
 
 The problem that i see with other applications is, the system being slow, old, which is frustrating to work with. Which PackApp is going to be the solution for it to help with that frustrations
+
+## Running it locally
+
+See [docs/setup.md](docs/setup.md) for how to install, start and test the app, and for the demo logins.
+
+## Documentation
+
+- [Setup and running locally](docs/setup.md)
+- [Login and roles](docs/auth-and-roles.md)
+- [Product brief](PROJECT_CONTEXT.md)
