@@ -20,7 +20,7 @@ In this repo only the user merges PRs, and work that builds on a PR must wait fo
 3. **When the watcher finishes**, read its output:
    - `MERGED` → `git checkout main`, `git pull`, then start the next piece of work on a new branch. Open its PR when done and start this skill again for that PR.
    - `CLOSED` (not merged) → the user rejected the PR. Stop and ask what they want changed.
-   - Stopped by the 2-hour limit while still `OPEN` → start the watcher again (step 1). Do not start the dependent work.
+   - Stopped by the 2-hour limit while still `OPEN` → do **not** restart it. Say in one line that the watcher stopped and that the user should say when the PR is merged. Restarting would wake Claude every 2 hours for nothing, which wastes tokens.
 
 ## Rules
 
@@ -32,3 +32,8 @@ In this repo only the user merges PRs, and work that builds on a PR must wait fo
 
 - It only works while this Claude Code session is open. If the session was closed, the user has to say that the PR is merged.
 - It checks once a minute, so there can be up to a minute's delay.
+- It watches for 2 hours. After that the user has to say that the PR is merged.
+
+## Token cost
+
+Waiting is a shell loop and uses no tokens. Tokens are spent only when the watcher ends and Claude is woken: once per PR.
