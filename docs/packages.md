@@ -38,7 +38,7 @@ Invalid input is refused with status 422 and a message saying which field is wro
 
 Sending `"notify": true` when registering puts a message in the local outbox for the package's `email`. Without it, nothing is created. A multi register produces one message for the whole batch.
 
-**No real email is sent in the MVP.** The outbox (`GET /api/notifications`) shows what would have been sent. To send for real later, replace the body of `queue_package_notification` in `app/services/notifications.py`.
+**No real email is sent in the MVP.** The outbox (the *Email outbox* page, or `GET /api/notifications`) shows what would have been sent. To send for real later, replace the body of `queue_package_notification` in `app/services/notifications.py`.
 
 ## Multi register
 

@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 PackApp (a.k.a. "Parcel Package App") is a goods-reception app for registering incoming packages and printing sticker labels. [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) is the product brief and the source of truth – read it before planning any feature.
 
-The MVP is being built in steps, one PR each. Done so far: backend scaffold with login and dynamic RBAC; package CRUD, search, tracking lookup and the notification outbox; label and list PDFs; frontend with login and single register. Still to come: frontend multi register, search/edit/delete and the admin page. Update this list as steps land.
+The first MVP from the brief is implemented: login with dynamic RBAC, single and multi register, tracking auto-fill, label/list PDFs, search with edit and delete, the admin page and a local email outbox. Known gaps: Parcelsapp is unverified against the live API, email is not really sent, and nothing has been tried on a physical scanner or label printer.
 
 ## Commands
 
@@ -43,11 +43,12 @@ Both at once: `.\dev.ps1` from the repo root. The backend has no linter configur
 
 ## Frontend architecture
 
-- React + Vite + TypeScript, plain CSS in `src/index.css`, no router yet.
+- React + Vite + TypeScript, plain CSS in `src/index.css`. No routing library: `hooks/useHashRoute` reads the page from `#/name`, and the `PAGES` list in `App.tsx` drives both the menu and the per-page permission check – add a page there.
 - `src/api/client.ts` `api()` is the only place that calls `fetch`; it converts FastAPI errors (string or validation list) into one readable message. `src/api/types.ts` mirrors the backend schemas by hand – update both together.
 - `src/auth/AuthContext.tsx` holds the current user; gate UI with `can(permission)` (the backend enforces it regardless).
-- `components/PackageForm.tsx` is the shared details form (single register now; multi register and edit should reuse it). Dropdown choices come from `/api/packages/options`.
-- Tests (vitest + Testing Library) mock the `api/*` modules; `window.open` is stubbed for the label tab. `tsconfig` has `erasableSyntaxOnly`, so no enums or constructor parameter properties.
+- `components/PackageForm.tsx` is the shared details form used by single register, multi register and `EditPackage`; shared rules and helpers live in `components/packageDetails.ts`. Dropdown choices come from `/api/packages/options`.
+- Do not use `window.confirm`/`alert` (they block browser automation used for verification); delete uses an in-page confirmation.
+- Tests (vitest + Testing Library) mock the `api/*` modules (and `useAuth` for pages that only need `can`); sample data is in `src/test/fixtures.ts`; `window.open` is stubbed for the label tab. `tsconfig` has `erasableSyntaxOnly`, so no enums or constructor parameter properties.
 - When checking in a browser, port 5173 may already be in use on this machine; Vite then picks another port.
 
 ## Stack
