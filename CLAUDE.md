@@ -75,6 +75,7 @@ Manual registration must always remain possible as the fallback when automation 
   - Commit regularly in small, logical steps with clear messages, so the history is easy to follow.
   - When a piece of work is finished and its tests pass, push the branch and open a PR to `main` (`EmirU116/packapp`) with a summary of what changed and how to test it.
   - **Only the user approves and merges PRs.** Never merge a PR, and wait for the user's approval of a PR before starting work that builds on it.
+  - After opening a PR, use the `wait-for-merge` skill (`.claude/skills/wait-for-merge/`) so work continues automatically once the user merges.
 - Web research is allowed for system and architecture design. Adding or creating skills for repeated actions is allowed, as are subagents and parallel agent teams when they make sense for a local project (no production-oriented agents).
 - Token efficiency: agent-to-agent messages should be terse, with no filler; reports and summaries to the user are written in normal, clear language.
 - Model choice: Haiku for quick lookups and reformatting, Sonnet as the everyday default, Opus for tangled architecture or multi-step agentic work, Fable only for the hardest problems.
