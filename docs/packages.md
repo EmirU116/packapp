@@ -47,7 +47,7 @@ Sending `"notify": true` when registering puts a message in the local outbox for
 - an empty entry gets a generated number
 - the same number may appear several times (several boxes on one tracking number)
 
-The three print outputs (list, labels, summary label) come with the label feature.
+The three print outputs (list, labels, summary label) are described in [labels.md](labels.md).
 
 ## Search
 
