@@ -29,9 +29,9 @@ Other things:
 
 Printing: in the browser's print dialog choose your label printer, the paper size of your stickers and "actual size". See [labels.md](labels.md).
 
-## Not in the app yet
+## Other pages
 
-Multi register, search/edit/delete and the Chief's admin page come in the next step. The backend for them already exists.
+Multi register, search (with edit and delete), the Chief's admin page and the email outbox are described in [frontend-pages.md](frontend-pages.md).
 
 ## For developers
 
@@ -40,11 +40,11 @@ frontend/src/
   api/         client.ts (fetch wrapper, error messages), types.ts, auth.ts, packages.ts
   auth/        AuthContext.tsx – current user, login/logout, can(permission)
   components/  PackageForm.tsx (the shared details fields), Layout.tsx
-  pages/       LoginPage.tsx, RegisterPage.tsx
+  pages/       LoginPage.tsx, RegisterPage.tsx (other pages: see frontend-pages.md)
 ```
 
 - All backend calls go through `api()` in `api/client.ts`, which turns backend errors into readable messages.
-- `PackageForm` holds the package fields and is meant to be reused by multi register and editing. Dropdown choices come from `GET /api/packages/options`, not from the frontend code.
+- `PackageForm` holds the package fields and is reused by multi register and editing. Dropdown choices come from `GET /api/packages/options`, not from the frontend code.
 - Show or hide actions with `useAuth().can('package.delete')`. The backend enforces the same permission, so hiding is only for tidiness.
 - During development Vite forwards `/api` to the backend on port 8000 (`vite.config.ts`), so the browser sees a single address.
 - The label tab is opened before the save request and pointed at the PDF afterwards; opening it after the request would be stopped by the browser's popup blocker.

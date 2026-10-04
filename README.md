@@ -11,6 +11,7 @@ See [docs/setup.md](docs/setup.md) for how to install, start and test the app, a
 
 - [Setup and running locally](docs/setup.md)
 - [The app: login and registering a package](docs/frontend-register.md)
+- [The app: multi register, search, admin and the outbox](docs/frontend-pages.md)
 - [Login and roles](docs/auth-and-roles.md)
 - [Packages: register, update, delete, search](docs/packages.md)
 - [Tracking lookup and generated tracking numbers](docs/tracking.md)

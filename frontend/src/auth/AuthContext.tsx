@@ -10,6 +10,8 @@ interface AuthState {
   loading: boolean
   login: (username: string, password: string) => Promise<void>
   logout: () => Promise<void>
+  /** Re-read the user from the backend, e.g. after their role's permissions changed. */
+  refresh: () => Promise<void>
   /** Whether the user may do something – used to show or hide actions. */
   can: (permission: Permission) => boolean
 }
@@ -38,15 +40,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null)
   }, [])
 
+  const refresh = useCallback(async () => {
+    setUser(await authApi.fetchCurrentUser())
+  }, [])
+
   const value = useMemo<AuthState>(
     () => ({
       user,
       loading,
       login,
       logout,
+      refresh,
       can: (permission) => user?.permissions.includes(permission) ?? false,
     }),
-    [user, loading, login, logout],
+    [user, loading, login, logout, refresh],
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
