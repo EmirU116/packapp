@@ -26,7 +26,8 @@ In this repo only the user merges PRs, and work that builds on a PR must wait fo
 
 - A merge is the approval. Never merge the PR yourself, and never start dependent work on any other signal.
 - If the user comments or asks for changes instead of merging, handle that first; the watcher keeps running.
-- If there is no next piece of work, just report that the PR was merged.
+- Start the watcher for **every** PR, including the last one of a plan. Never skip it because no next step is planned.
+- If there is no planned next piece of work when the PR is merged: update `main`, say the PR is merged, and propose the next tasks for the user to choose from (known gaps, feedback from the PR). Do not invent work and start it unasked.
 
 ## Limits
 
