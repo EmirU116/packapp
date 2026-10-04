@@ -10,6 +10,7 @@ See [docs/setup.md](docs/setup.md) for how to install, start and test the app, a
 ## Documentation
 
 - [Setup and running locally](docs/setup.md)
+- [The app: login and registering a package](docs/frontend-register.md)
 - [Login and roles](docs/auth-and-roles.md)
 - [Packages: register, update, delete, search](docs/packages.md)
 - [Tracking lookup and generated tracking numbers](docs/tracking.md)
