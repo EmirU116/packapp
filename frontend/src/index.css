@@ -1,0 +1,300 @@
+:root {
+  --bg: #f3f4f6;
+  --surface: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #d1d5db;
+  --primary: #1d4ed8;
+  --primary-hover: #1e40af;
+  --error-bg: #fee2e2;
+  --error-text: #991b1b;
+  --info-bg: #e0ecff;
+  --info-text: #1e3a8a;
+  --auto-bg: #ecfdf5;
+  --auto-border: #34d399;
+
+  font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1 {
+  margin: 0 0 1rem;
+  font-size: 1.4rem;
+}
+
+h2 {
+  margin: 0 0 0.75rem;
+  font-size: 1.1rem;
+}
+
+small {
+  color: var(--muted);
+  font-weight: 400;
+}
+
+/* --- frame --- */
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 1.25rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.15rem;
+  color: var(--primary);
+}
+
+.spacer {
+  flex: 1;
+}
+
+.page {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 1.25rem;
+  display: grid;
+  gap: 1.25rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem;
+}
+
+.login {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+}
+
+.login .card {
+  width: 100%;
+  max-width: 340px;
+  display: grid;
+  gap: 0.9rem;
+}
+
+/* --- form --- */
+
+fieldset {
+  border: 0;
+  border-top: 1px solid var(--border);
+  margin: 1.1rem 0 0;
+  padding: 0.6rem 0 0;
+}
+
+legend {
+  padding: 0 0.5rem 0 0;
+  font-weight: 600;
+  color: var(--muted);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem 1rem;
+  /* inputs in a row line up even when one label wraps */
+  align-items: end;
+}
+
+.grid .wide {
+  grid-column: 1 / -1;
+}
+
+.field {
+  display: grid;
+  gap: 0.25rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 0.8rem;
+}
+
+.grid .field {
+  margin-top: 0;
+}
+
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+
+input:not([type='checkbox']),
+select,
+textarea {
+  width: 100%;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+/* fields the lookup filled in */
+.auto-filled input,
+.auto-filled select {
+  background: var(--auto-bg);
+  border-color: var(--auto-border);
+}
+
+.scan {
+  display: flex;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.scan .field {
+  flex: 1;
+  margin-top: 0;
+}
+
+.scan-input {
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.counter {
+  justify-self: end;
+}
+
+.counter.low {
+  color: var(--error-text);
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.checkbox input {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+/* --- buttons and messages --- */
+
+button {
+  padding: 0.55rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+button:hover:not(:disabled) {
+  background: var(--bg);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+button.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 600;
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--primary-hover);
+}
+
+.actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.1rem;
+}
+
+.message {
+  margin: 0.8rem 0 0;
+  padding: 0.6rem 0.8rem;
+  border-radius: 6px;
+  font-size: 0.92rem;
+}
+
+.message.error {
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.message.info {
+  background: var(--info-bg);
+  color: var(--info-text);
+}
+
+/* --- recently registered --- */
+
+.recent {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.recent li {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-top: 1px solid var(--border);
+}
+
+.recent li:first-child {
+  border-top: 0;
+}
+
+a {
+  color: var(--primary);
+}
+
+@media (max-width: 600px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .scan {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
