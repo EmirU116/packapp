@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 PackApp (a.k.a. "Parcel Package App") is a goods-reception app for registering incoming packages and printing sticker labels. [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) is the product brief and the source of truth – read it before planning any feature.
 
-The MVP is being built in steps, one PR each. Done so far: backend scaffold with login and dynamic RBAC. Still to come: package CRUD/search and tracking lookup, label PDFs, then the frontend. Update this list as steps land.
+The MVP is being built in steps, one PR each. Done so far: backend scaffold with login and dynamic RBAC; package CRUD, search, tracking lookup and the notification outbox. Still to come: label PDFs, then the frontend. Update this list as steps land.
 
 ## Commands
 
@@ -25,6 +25,10 @@ There is no linter configured and no frontend yet.
 - Layers: `routers/` (HTTP only) → `services/` (logic) → `models/` (SQLAlchemy) with `schemas/` (Pydantic) for request/response shapes.
 - Auth: JWT in an HttpOnly cookie; `services/auth.get_current_user` reloads the user from the DB on every request.
 - RBAC: endpoints are gated with `Depends(require_permission(CODE))` from `services/permissions.py`. Permissions per role live in the DB, so admin changes apply on the next request. Any change to roles/users must call `ensure_rbac_manager_remains(db)` before commit.
+- Packages: single and multi register both go through `services/packages.create_packages` (one shared set of details, one package per tracking number; empty number → generated). `tracking_number` is intentionally not unique. Package timestamps are local time (`models/package.local_now`), unlike `User.created_at` (UTC).
+- Field constraints live once in `schemas/package.py` as annotated types shared by create and update; dropdown choices come from the enums in `models/package.py` via `GET /api/packages/options`.
+- Tracking auto-fill: `services/tracking.lookup_tracking` merges sources in order pattern → parcelsapp (only if `PARCELSAPP_API_KEY` is set; unverified against the live API) → history.
+- Email: `services/notifications.py` writes to a local outbox table; nothing is sent.
 - Tests (`tests/conftest.py`) override `get_db` with a seeded in-memory SQLite DB; use the `login("chief")` fixture to get a client logged in as a demo user. The app's `lifespan` does not run in tests.
 
 ## Stack

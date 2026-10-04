@@ -11,4 +11,6 @@ See [docs/setup.md](docs/setup.md) for how to install, start and test the app, a
 
 - [Setup and running locally](docs/setup.md)
 - [Login and roles](docs/auth-and-roles.md)
+- [Packages: register, update, delete, search](docs/packages.md)
+- [Tracking lookup and generated tracking numbers](docs/tracking.md)
 - [Product brief](PROJECT_CONTEXT.md)

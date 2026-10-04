@@ -19,6 +19,9 @@ class Settings(BaseSettings):
     secret_key: str = "packapp-local-development-secret-change-me"
     database_url: str = f"sqlite:///{(BASE_DIR / 'data' / 'packapp.db').as_posix()}"
     token_expire_minutes: int = 720
+    # Parcelsapp.com lookups are off until a key is set; the local lookup is always used
+    parcelsapp_api_key: str = ""
+    parcelsapp_country: str = "Sweden"
 
 
 settings = Settings()
