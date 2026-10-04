@@ -62,3 +62,42 @@ export interface RecipientSuggestion {
   email: string
   room_number: string
 }
+
+export interface PackagePage {
+  items: Package[]
+  total: number
+}
+
+/** Changes to a package; only the fields present are changed. */
+export interface PackageUpdate extends Partial<PackageDetails> {
+  tracking_number?: string
+  status?: string
+}
+
+export interface SearchParams {
+  q?: string
+  dateFrom?: string
+  dateTo?: string
+  limit?: number
+  offset?: number
+}
+
+export interface Role {
+  id: number
+  name: string
+  permissions: string[]
+}
+
+export interface PermissionInfo {
+  code: string
+  description: string
+}
+
+export interface OutboxMessage {
+  id: number
+  package_id: number
+  to_email: string
+  subject: string
+  body: string
+  created_at: string
+}

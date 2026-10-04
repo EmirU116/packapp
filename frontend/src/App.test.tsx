@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { beforeEach, expect, test, vi } from 'vitest'
+import * as adminApi from './api/admin'
 import * as authApi from './api/auth'
 import { ApiError } from './api/client'
 import * as packagesApi from './api/packages'
@@ -9,6 +10,7 @@ import App from './App'
 
 vi.mock('./api/auth')
 vi.mock('./api/packages')
+vi.mock('./api/admin')
 
 const INTERN: User = {
   id: 3,
@@ -21,6 +23,12 @@ const INTERN: User = {
 }
 
 beforeEach(() => {
+  window.location.hash = ''
+  vi.mocked(packagesApi.searchPackages).mockResolvedValue({ items: [], total: 0 })
+  vi.mocked(packagesApi.fetchOutbox).mockResolvedValue([])
+  vi.mocked(adminApi.fetchPermissions).mockResolvedValue([])
+  vi.mocked(adminApi.fetchRoles).mockResolvedValue([])
+  vi.mocked(adminApi.fetchUsers).mockResolvedValue([])
   vi.mocked(packagesApi.fetchOptions).mockResolvedValue({
     package_types: ['Parcel'],
     routes: ['ABC'],
@@ -73,9 +81,49 @@ test('keeps an existing session on page load', async () => {
   expect(await screen.findByRole('heading', { name: 'Register package' })).toBeInTheDocument()
 })
 
-test('hides the register form from a role without that permission', async () => {
+test('a role without register permission gets no register pages and lands on search', async () => {
   vi.mocked(authApi.fetchCurrentUser).mockResolvedValue({ ...INTERN, permissions: [] })
   render(<App />)
-  expect(await screen.findByText(/does not allow registering/)).toBeInTheDocument()
-  expect(screen.queryByRole('heading', { name: 'Register package' })).not.toBeInTheDocument()
+
+  expect(await screen.findByRole('heading', { name: 'Search packages' })).toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: 'Register' })).not.toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: 'Multi register' })).not.toBeInTheDocument()
+})
+
+test('the menu only offers Admin to users who may manage roles', async () => {
+  vi.mocked(authApi.fetchCurrentUser).mockResolvedValue(INTERN)
+  const { unmount } = render(<App />)
+  await screen.findByRole('heading', { name: 'Register package' })
+  expect(screen.getByRole('link', { name: 'Search' })).toBeInTheDocument()
+  expect(screen.queryByRole('link', { name: 'Admin' })).not.toBeInTheDocument()
+  unmount()
+
+  vi.mocked(authApi.fetchCurrentUser).mockResolvedValue({
+    ...INTERN,
+    permissions: [...INTERN.permissions, 'rbac.manage'],
+  })
+  render(<App />)
+  expect(await screen.findByRole('link', { name: 'Admin' })).toBeInTheDocument()
+})
+
+test('typing the admin address does not open it without permission', async () => {
+  window.location.hash = '#/admin'
+  vi.mocked(authApi.fetchCurrentUser).mockResolvedValue(INTERN)
+  render(<App />)
+
+  expect(await screen.findByRole('heading', { name: 'Register package' })).toBeInTheDocument()
+  expect(screen.queryByRole('heading', { name: 'Roles and permissions' })).not.toBeInTheDocument()
+})
+
+test('the menu switches between pages', async () => {
+  vi.mocked(authApi.fetchCurrentUser).mockResolvedValue(INTERN)
+  const user = userEvent.setup()
+  render(<App />)
+
+  await user.click(await screen.findByRole('link', { name: 'Search' }))
+  expect(await screen.findByRole('heading', { name: 'Search packages' })).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Search' })).toHaveAttribute('aria-current', 'page')
+
+  await user.click(screen.getByRole('link', { name: 'Multi register' }))
+  expect(await screen.findByRole('heading', { name: 'Multi register' })).toBeInTheDocument()
 })

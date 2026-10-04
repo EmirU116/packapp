@@ -9,20 +9,7 @@ import {
 } from '../api/packages'
 import type { Package, PackageDetails, PackageOptions } from '../api/types'
 import { PackageForm } from '../components/PackageForm'
-import { EMPTY_DETAILS } from '../components/packageDetails'
-
-// Readable names for the fields the lookup can fill in
-const FIELD_NAMES: Record<string, string> = {
-  carrier: 'carrier',
-  package_type: 'type',
-  sender: 'from',
-  recipient: 'recipient',
-  institute: 'institute',
-  route: 'route',
-  su_number: 'SU number',
-  email: 'email',
-  room_number: 'room number',
-}
+import { checkDetails, describeLookup, EMPTY_DETAILS, messageOf } from '../components/packageDetails'
 
 /**
  * Single register – the core workflow:
@@ -59,14 +46,9 @@ export function RegisterPage() {
     lookedUp.current = number
     try {
       const { fields } = await lookupTracking(number)
-      const found = Object.keys(fields)
       setDetails((current) => ({ ...current, ...fields }))
-      setAutoFilled(new Set(found))
-      setLookupNote(
-        found.length
-          ? `Filled in automatically: ${found.map((f) => FIELD_NAMES[f] ?? f).join(', ')}. Check and correct if needed.`
-          : 'Nothing found for this number – fill in the details by hand.',
-      )
+      setAutoFilled(new Set(Object.keys(fields)))
+      setLookupNote(describeLookup(fields))
     } catch {
       // a failed lookup must never block manual registration
       setLookupNote('Lookup is unavailable – fill in the details by hand.')
@@ -90,7 +72,7 @@ export function RegisterPage() {
       setTrackingNumber(tracking_number)
       setLookupNote('Tracking number created for a package without one.')
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : 'Could not create a tracking number')
+      setError(messageOf(caught, 'Could not create a tracking number'))
     }
   }
 
@@ -107,12 +89,9 @@ export function RegisterPage() {
 
   const save = async (event: FormEvent) => {
     event.preventDefault()
-    if (!details.recipient.trim() && !details.institute.trim()) {
-      setError('Give a recipient, or an institute when there is no recipient name.')
-      return
-    }
-    if (notify && !details.email.trim()) {
-      setError('An email address is needed to send a notification.')
+    const problem = checkDetails(details, notify)
+    if (problem) {
+      setError(problem)
       return
     }
 
@@ -128,7 +107,7 @@ export function RegisterPage() {
       reset()
     } catch (caught) {
       labelTab?.close()
-      setError(caught instanceof Error ? caught.message : 'Could not save the package')
+      setError(messageOf(caught, 'Could not save the package'))
     } finally {
       setSaving(false)
     }
