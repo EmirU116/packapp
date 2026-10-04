@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 PackApp (a.k.a. "Parcel Package App") is a goods-reception app for registering incoming packages and printing sticker labels. [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) is the product brief and the source of truth – read it before planning any feature.
 
-The MVP is being built in steps, one PR each. Done so far: backend scaffold with login and dynamic RBAC; package CRUD, search, tracking lookup and the notification outbox; label and list PDFs. Still to come: the frontend. Update this list as steps land.
+The MVP is being built in steps, one PR each. Done so far: backend scaffold with login and dynamic RBAC; package CRUD, search, tracking lookup and the notification outbox; label and list PDFs; frontend with login and single register. Still to come: frontend multi register, search/edit/delete and the admin page. Update this list as steps land.
 
 ## Commands
 
@@ -17,7 +17,16 @@ Run from `backend/` (PowerShell). The virtualenv is `backend/.venv`.
 - All tests: `.venv\Scripts\python -m pytest`
 - Single test: `.venv\Scripts\python -m pytest tests/test_auth.py::test_logout_ends_session`
 
-There is no linter configured and no frontend yet.
+Run from `frontend/`:
+
+- Install: `npm install`
+- Dev server: `npm run dev` (proxies `/api` to the backend on port 8000)
+- All tests: `npm test`
+- Single test file: `npx vitest run src/pages/RegisterPage.test.tsx`
+- Type-check + build: `npm run build`
+- Lint: `npm run lint` (oxlint)
+
+Both at once: `.\dev.ps1` from the repo root. The backend has no linter configured.
 
 ## Backend architecture
 
@@ -32,9 +41,18 @@ There is no linter configured and no frontend yet.
 - Email: `services/notifications.py` writes to a local outbox table; nothing is sent.
 - Tests (`tests/conftest.py`) override `get_db` with a seeded in-memory SQLite DB; use the `login("chief")` fixture to get a client logged in as a demo user. The app's `lifespan` does not run in tests.
 
+## Frontend architecture
+
+- React + Vite + TypeScript, plain CSS in `src/index.css`, no router yet.
+- `src/api/client.ts` `api()` is the only place that calls `fetch`; it converts FastAPI errors (string or validation list) into one readable message. `src/api/types.ts` mirrors the backend schemas by hand – update both together.
+- `src/auth/AuthContext.tsx` holds the current user; gate UI with `can(permission)` (the backend enforces it regardless).
+- `components/PackageForm.tsx` is the shared details form (single register now; multi register and edit should reuse it). Dropdown choices come from `/api/packages/options`.
+- Tests (vitest + Testing Library) mock the `api/*` modules; `window.open` is stubbed for the label tab. `tsconfig` has `erasableSyntaxOnly`, so no enums or constructor parameter properties.
+- When checking in a browser, port 5173 may already be in use on this machine; Vite then picks another port.
+
 ## Stack
 
-- Frontend: TypeScript (React + Vite, planned)
+- Frontend: TypeScript, React + Vite
 - Backend: Python with FastAPI, SQLAlchemy, SQLite file at `backend/data/packapp.db`
 - Verification is done through a locally served web app; the product goals are **simplification** and **automation** of a slow, manual workflow.
 
